@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<!-- Tách FE khỏi BE (Vercel + Render): scripts/build_frontend.py tự điền URL backend vào đây. Để trống = cùng domain. -->
+<meta name="api-base" content="">
+<title>Đăng ký khuôn mặt · CLB</title>
+<link rel="stylesheet" href="/css/style.css?v=8">
+</head>
+<body>
+<header class="topbar"><div class="brand"><span class="logo" aria-hidden="true">◉</span><b>Face ID CLB</b></div><ol class="steps" id="steps" aria-label="Các bước"><li data-s="1">Thông tin</li><li data-s="2">Quét mặt</li><li data-s="3">Kiểm tra</li><li data-s="4">Hoàn tất</li></ol></header>
+<main id="app">
+
+  <!-- Cổng mã CLB: chỉ hiện MỘT lần khi vào web (nếu server đặt ENROLL_CODE) -->
+  <section id="screen-gate" class="screen card">
+    <div class="hero">🔒</div>
+    <h1>Nhập mã CLB</h1>
+    <p class="muted">Mã do ban chủ nhiệm cung cấp. Chỉ cần nhập một lần, những người đăng ký tiếp theo trên thiết bị này không phải nhập lại.</p>
+    <form id="gate-form" autocomplete="off">
+      <label>Mã CLB<input id="gate_code" required maxlength="80" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••••"></label>
+      <p id="gate-err" class="error" hidden></p>
+      <button class="btn primary" type="submit">Vào</button>
+    </form>
+  </section>
+
+  <section id="screen-form" class="screen card">
+    <h1>Đăng ký khuôn mặt</h1>
+    <p class="muted">Quét mặt giống Face ID: nhìn thẳng vài giây rồi xoay đầu thật chậm theo vòng tròn. Mất khoảng 30 giây.</p>
+    <form id="form" autocomplete="off">
+      <label>Mã thành viên / MSSV <span class="req">*</span>
+        <input id="member_id" required maxlength="40" inputmode="text" autocapitalize="off" spellcheck="false" placeholder="vd 20210001">
+      </label>
+      <label>Họ và tên <span class="req">*</span>
+        <input id="full_name" required maxlength="100" placeholder="Nguyễn Văn A">
+      </label>
+      <div class="two">
+        <label>Ban / đội<input id="group" maxlength="60"></label>
+        <label>Ghi chú<input id="notes" maxlength="500"></label>
+      </div>
+      <button class="btn primary big" type="submit">Bắt đầu quét</button>
+    </form>
+    <ul class="tips">
+      <li><span>💡</span>Chỗ đủ sáng, ánh sáng chiếu vào mặt, không ngược sáng.</li>
+      <li><span>👤</span>Chỉ một người trong khung hình, nền đơn giản.</li>
+      <li><span>📱</span>Giữ máy ngang tầm mắt, cách một cánh tay.</li>
+      <li><span>🌐</span>Mở bằng Chrome/Safari/Edge, không mở trong Zalo hay Facebook.</li>
+    </ul>
+  </section>
+
+  <section id="screen-capture" class="screen">
+    <div class="stage" id="stage">
+      <video id="video" playsinline muted></video>
+      <svg id="ring" class="ring-svg" viewBox="-60 -60 120 120" aria-hidden="true"></svg>
+      <div class="oval" id="oval"></div>
+      <div class="chip" id="badge"><span id="badge-label">Đang khởi động…</span></div>
+      <div class="dbg" id="dbg" hidden></div>
+      <div class="bar"><div id="scan-fill"></div></div>
+    </div>
+    <div class="hud" id="hudbox"><div class="hud-icon" id="hud-icon">◉</div><div><div class="hud-title" id="hint">Đang khởi động…</div><div class="hud-sub" id="hint-sub"></div></div></div>
+    <div class="row between">
+      <button class="btn ghost" id="btn-cancel">Hủy</button>
+      <button class="btn" id="btn-next" hidden>Hoàn tất với số ảnh hiện có</button>
+    </div>
+  </section>
+
+  <section id="screen-review" class="screen card">
+    <h2>Kiểm tra ảnh</h2>
+    <p class="muted" id="review-summary"></p>
+    <div id="review-groups"></div>
+    <div class="row between">
+      <button class="btn" id="btn-rescan">Quét lại</button>
+      <button class="btn primary" id="btn-send">Gửi ảnh</button>
+    </div>
+  </section>
+
+  <section id="screen-upload" class="screen card">
+    <h2>Đang gửi ảnh…</h2>
+    <div class="progress"><div id="up-fill"></div></div>
+    <p id="up-text" class="muted"></p>
+    <p id="up-error" class="error" hidden></p>
+    <div class="row"><button class="btn primary" id="btn-retry" hidden>Gửi lại các ảnh chưa gửi</button></div>
+  </section>
+
+  <section id="screen-done" class="screen card center">
+    <div class="check" aria-hidden="true">✓</div>
+    <h2>Hoàn tất, cảm ơn bạn!</h2>
+    <p id="done-text"></p>
+    <ul id="done-list" class="plain"></ul>
+    <button class="btn primary big" id="btn-next-person">Người tiếp theo</button>
+    <button class="btn ghost" id="btn-more">Bổ sung thêm ảnh cho người này</button>
+  </section>
+
+  <section id="screen-error" class="screen card">
+    <h2>Có sự cố</h2>
+    <p id="err-text" class="error"></p>
+    <div class="row"><button class="btn primary" id="btn-err-back">Quay lại</button></div>
+  </section>
+
+  <p class="foot" id="conn" aria-live="polite"></p>
+</main>
+<script type="module" src="/js/app.js?v=8"></script>
+</body>
+</html>

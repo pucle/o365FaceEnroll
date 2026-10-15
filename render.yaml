@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: face-enrollment
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - {key: STORAGE_BACKEND, value: db}
+      - {key: DATABASE_URL, sync: false}
+      - {key: ADMIN_TOKEN, sync: false}
+      - {key: SYNC_TOKEN, sync: false}        # token chỉ-đọc cho hệ thống nhận diện
+      - {key: ENROLL_CODE, sync: false}
+      - {key: SESSION_SECRET, generateValue: true}
+      - {key: ALLOWED_ORIGINS, sync: false}   # chỉ cần khi frontend ở Vercel
+      - {key: API_ONLY, value: "0"}            # đặt 1 khi frontend ở Vercel

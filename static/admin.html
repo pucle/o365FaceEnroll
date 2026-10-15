@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="api-base" content="">
+<title>Quản trị · Face ID CLB</title><link rel="stylesheet" href="/css/admin.css?v=7"></head>
+<body>
+<header class="topbar"><div class="brand"><span class="logo">◉</span><b>Quản trị Face ID</b></div><div class="right"><a class="link" href="/">← Trang đăng ký</a><button class="btn small ghost" id="bLogout" hidden>Đăng xuất</button></div></header>
+<main>
+  <section class="card narrow" id="login">
+    <div class="hero">🔐</div><h1>Đăng nhập quản trị</h1>
+    <p class="muted">Nhập <code>ADMIN_TOKEN</code> đã đặt trên máy chủ.</p>
+    <label>Mã quản trị<input id="tok" type="password" autocomplete="off" placeholder="ADMIN_TOKEN"></label>
+    <p id="msgLogin" class="msg" role="alert"></p><button id="bLogin" class="btn primary">Vào</button>
+  </section>
+
+  <div id="app" hidden>
+    <section class="stats" id="stats"></section>
+
+    <section class="card">
+      <div class="head"><h2>Tải dữ liệu</h2><span class="muted small" id="quota"></span></div>
+      <div class="dl">
+        <button id="bZip" class="btn primary">⬇ Tải ZIP tất cả</button>
+        <button id="bZipNew" class="btn">⬇ ZIP người chưa xuất</button>
+        <button id="bMan" class="btn ghost">manifest.json</button>
+        <button id="bCsv" class="btn ghost">manifest.csv</button>
+        <button id="bMark" class="btn ghost">✔ Đánh dấu đã xuất</button>
+      </div>
+      <p class="muted small">ZIP gồm <code>dataset/&lt;mã&gt;/&lt;tư thế&gt;_001.jpg</code> + manifest. Dữ liệu lớn (&gt; vài trăm MB): dùng <code>scripts/download_dataset.py</code> để tải không tốn RAM trình duyệt.</p>
+      <div id="msgDl" class="msg" role="alert"></div>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>Thành viên</h2>
+        <div class="tools"><input id="q" type="search" placeholder="Tìm mã, tên, ban…"><select id="st"><option value="all">Tất cả</option><option value="pending">Chưa xuất</option><option value="exported">Đã xuất</option></select></div></div>
+      <div class="tablewrap"><table><thead><tr><th>Thành viên</th><th>Ban</th><th>Ảnh</th><th>Trạng thái</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    </section>
+  </div>
+</main>
+
+<div class="modal" id="detail" hidden><div class="sheet">
+  <div class="head"><h2 id="dTitle"></h2><button class="btn small ghost" id="dClose" aria-label="Đóng">✕</button></div>
+  <p class="muted small" id="dMeta"></p>
+  <div class="thumbs" id="thumbs"></div>
+  <div class="row"><button id="bDelAll" class="btn danger">Xoá hết ảnh (để quét lại)</button><button id="bDelMem" class="btn danger">Xoá thành viên</button></div>
+</div></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="/js/admin.js?v=7"></script>
+</body></html>

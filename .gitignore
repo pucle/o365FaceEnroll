@@ -1,0 +1,42 @@
+# --- Môi trường ảo & bí mật ---
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Node (nếu chạy test JS bằng npm) ---
+node_modules/
+npm-debug.log*
+
+# --- Dữ liệu khuôn mặt / file tạm (tránh lỡ commit dữ liệu cá nhân) ---
+data/
+uploads/
+tmp/
+*.jpg
+*.jpeg
+*.png
+!static/**/*.png
+!static/**/*.jpg
+*.zip
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Log ---
+*.log
